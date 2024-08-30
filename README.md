@@ -11,3 +11,8 @@ By using or installing Library you are agreeing to the terms of the [MIT licence
 [Copyright (c) 2024 Ricardo Lima Caratti](https://github.com/pu2clr/QN800X/blob/main/LICENSE).
 
 Contact: __pu2clr@gmail.com__.
+
+
+
+![UNDER CONSTRUCTION](./extras/images/under_construction.png)
+
