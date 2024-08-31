@@ -130,6 +130,7 @@ typedef union {
 } qn8066_dev_add;
 
 /**
+ * @ingroup group00
  * @brief Analog control functions.
  * 
  * | XTAL Value | Frequency in MHz  |
@@ -161,6 +162,46 @@ typedef union {
   } arg;
   uint8_t raw;
 } qn8066_anactl1;
+
+/**
+ * @ingroup group00
+ * @brief TX mode input impedance, crystal cap load setting.
+ * @details TX mode input impedance for both L/R channels is expressed in kΩ. The table below shows the velues available.
+ *
+ * | RIN Value  | Impedance kΩ    | 
+ * | ---------  | --------------  | 
+ * | 00 (0)     | 10              |
+ * | 01 (1)     | 20              |
+ * | 10 (2)     | 40              |
+ * | 11 (3)     | 80              |
+ *   
+ */
+typedef union {
+  struct {
+    uint8_t XCSEL: 6;   //!< Crystal cap load setting: The loading cap on each side is: 10+XCSEL*0.32 pF, i.e. it ranges from 10pF to 30pF. Default is 20 pF.
+    uint8_t RIN: 2;     //!< TX mode input impedance for both L/R channels: (kΩ)
+  } arg;
+  uint8_t raw;
+} qn8066_reg_vga;
+
+
+typedef union {
+  struct {
+    uint8_t   CID2:2;
+    uint8_t   CID1:4;
+    uint8_t   Rsvd:2;
+  } arg;
+  uint8_t raw;
+} qn8066_cidr1;
+
+
+typedef union {
+  struct {
+    uint8_t   CID4:2;
+    uint8_t   CID3:4;
+  } arg;
+  uint8_t raw;
+} qn8066_cidr2;
 
 
 typedef union {
