@@ -12,15 +12,15 @@
  * @date  2024
  */
 
-#ifndef _QN8066_H // Prevent this file from being compiled more than once
-#define _QN8066_H
+#ifndef _qn800X_H // Prevent this file from being compiled more than once
+#define _qn800X_H
 
 #include <Arduino.h>
 #include <Wire.h>
 
-#define QN8066_I2C_ADDRESS 0x21   // See Datasheet pag. 16.
-#define QN8066_RESET_DELAY 1000   // Delay after reset in us
-#define QN8066_DELAY_COMMAND 2500 // Delay after command
+#define qn800X_I2C_ADDRESS 0x21   // See Datasheet pag. 16.
+#define qn800X_RESET_DELAY 1000   // Delay after reset in us
+#define qn800X_DELAY_COMMAND 2500 // Delay after command
 
 /**
  * @brief QN8066 Register addresses
@@ -127,7 +127,7 @@ typedef union {
     uint8_t RXCCAD:1;   //!< RX CCA threshold MSB. See CCA register 19h.
   } arg;
   uint8_t raw;
-} qn8066_dev_add;
+} qn800X_dev_add;
 
 /**
  * @ingroup group00
@@ -161,7 +161,7 @@ typedef union {
     uint8_t MUTE_EN:1;    //!< TX and RX audio mute enable: 0=Un-mute;1=Mute
   } arg;
   uint8_t raw;
-} qn8066_anactl1;
+} qn800X_anactl1;
 
 /**
  * @ingroup group00
@@ -182,7 +182,7 @@ typedef union {
     uint8_t RIN: 2;     //!< TX mode input impedance for both L/R channels: (kΩ)
   } arg;
   uint8_t raw;
-} qn8066_reg_vga;
+} qn800X_reg_vga;
 
 
 /**
@@ -196,7 +196,7 @@ typedef union {
     uint8_t   Rsvd:2;
   } arg;
   uint8_t raw;
-} qn8066_cidr1;
+} qn800X_cidr1;
 
 /**
  * @ingroup group00
@@ -208,22 +208,149 @@ typedef union {
     uint8_t   CID3:4;
   } arg;
   uint8_t raw;
-} qn8066_cidr2;
+} qn800X_cidr2;
 
 
+/**
+ * @ingroup group00
+ * @brief Sets I2S parameters.
+ * @details I2S format in TX mode
+ * | TX mode value | Description        | 
+ * | ------------- | -----------------  | 
+ * |  000 (0)      | MSB justified mode | 
+ * |  001 (1)      | I2S mode           |
+ * |  010 (2)      | DSP1 mode          |
+ * |  011 (3)      | DSP2 mode          |
+ * |  100 (4)      | LSB justified mode |
+ * |  > 4          | Reserved           |  
+ *
+ * @details I2S data rate
+ * | I2S data rate | Description  | 
+ * | ------------- | -------------| 
+ * |   00 (0)      | 32 kbps      | 
+ * |   01 (1)      | 40 kbps      |
+ * |   10 (2)      | 44.1 kbps    |
+ * |   11 (3)      | 48 kbps      |
+ *
+ * @details I2S bit width
+ * | I2S bit width | Description  | 
+ * | ------------- | -------------| 
+ * |   00 (0)      |  8 bits      | 
+ * |   01 (1)      | 16 bits      |
+ * |   10 (2)      | 24 bits      |
+ * |   11 (3)      | 32 bits      |
+ */
+typedef union {
+  struct {
+    uint8_t I2SFMT: 3;      //!< See I2S format in TX mode table
+    uint8_t I2SMODE:1;      //!< I2S mode: 0=Slave; 1=Master
+    uint8_t I2SDRATE:2;     //!< See I2S data rate table
+    uint8_t I2SBW:2;        //!< See I2S bit width table
+  } arg;
+  uint8_t raw;
+} qn800X_i2s;
+
+
+/**
+ * @ingroup group00
+ * @brief Lower 8 bits of 10-bit channel index.
+ * @details Lower 8 bits of 10-bit Channel Index: Channel used for TX/RX has two origins, one is from this 
+ * @details register and CH[9:8] at 0Bh which can be written by the user, another is from CCA/CCS. 
+ * @details CCA/CCS selected channels are stored in an internal register, which is different from the CH 
+ * @details register, but it can be read out through register CH and be used for TX/RX when CCA_CH_DIS 
+ * @details (reg. 00h bit [0]) = 0.
+ */
+typedef union {
+  uint8_t CH;
+  uint8_t raw;
+} qn800X_ch;
+
+
+/**
+ * @ingroup group00
+ * @brief Lower 8 bits of 10-bit channel scan start channel index.
+ */
+typedef union {
+  uint8_t CH_STA;
+  uint8_t raw;
+} qn800X_ch_start;
+
+/**
+ * @ingroup group00
+ * @brief Lower 8 bits of 10-bit channel scan stop channel index.
+ */
+typedef union {
+  uint8_t CH_STP;
+  uint8_t raw;
+} qn800X_ch_stop;
+
+/**
+ * @ingroup group00
+ * @brief Channel scan frequency step. Highest 2 bits of channel indexes.
+ * @details Frequency step table
+ * | Frequency step | Description | 
+ * | -------------  | ------------| 
+ * |   00 (0)       |  50 kHz     | 
+ * |   01 (1)       | 100 kHz     |
+ * |   10 (2)       | 200 KHz     |
+ * |   11 (3)       | Reserved    |
+ */
+typedef union {
+  struct {
+    uint8_t CH:2;       //!< Highest 2 bits of 10-bit channel index: Channel freq is (76+CH*0.05) MHz.
+    uint8_t CH_STA:2;   //!< Highest 2 bits of 10-bit CCA (channel scan) start channel index: Start freq is (76+CH_STA*0.05) MHz.
+    uint8_t CH_STP:2;   //!< Highest 2 bits of 10-bit CCA (channel scan) stop channel index: Stop freq is (76+CH_STP*0.05) MHz.
+    uint8_t FSTEP:2;    //!< See CCA (channel scan) frequency step table 
+  } arg;
+  uint8_t raw;
+} qn800X_ch_step;
+
+
+/**
+ * @ingroup group00
+ * @brief Output power calibration control.
+ * @details PA calibration target value. PA output target is (0.37*PAC_TARGET+68) dBuV. Valid values are 31-131 dBuV.
+ */
+typedef union {
+  uint8_t PAC_TARGET;   //!< Valid values are 31-131 dBuV
+  uint8_t raw;
+} qn800X_pac_target;
+
+
+
+/**
+ * @ingroup group00
+ * @brief Sets TX gain parameters.
+ */
+typedef union {
+  struct {
+    uint8_t TXAGC_GVGA:4;  //!< TX input buffer gain: (dB)
+  } arg;
+  uint8_t raw;
+} qn800X_xxxx;
+
+
+/**
+ * @ingroup group00
+ * @brief Device ID
+ */
 typedef union {
   struct {
     uint8_t   dummy;
   } arg;
   uint8_t raw;
-} qn8066_xxxx;
+} qn800X_xxxx;
 
+/**
+ * @ingroup group00
+ * @brief Device ID
+ */
 typedef union {
   struct {
     uint8_t   dummy;
   } arg;
   uint8_t raw;
-} qn8066_yyyy;
+} qn800X_yyyy;
 
 
 
@@ -397,4 +524,4 @@ char* formatCurrentFrequency(char decimalSeparator);
 
 
 };
-#endif // _QN8066_H
+#endif // _qn800X_H
