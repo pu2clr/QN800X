@@ -1,29 +1,29 @@
 /**
- * @brief QN8066 ARDUINO LIBRARY
+ * @brief QN800X (QN8006 and QN8007) ARDUINO LIBRARY
  *
- * @details This is an Arduino library for the QN8066 FM RX/TX device (Digital FM Transceiver for Portable Devices).
+ * @details This is an Arduino library for the QN800X FM RX/TX device (Digital FM Transceiver for Portable Devices).
  * @details The communication used by this library is I2C.
  * @details This file contains: const (#define), Defined Data type and Methods declarations 
- * @details You can see a complete documentation on  <https://github.com/pu2clr/QN8066>
- * @details There are examples that can help you in your project on  <https://github.com/pu2clr/QN8066/tree/master/examples>
- * @see [General Documentation](https://pu2clr.github.io/QN8066/)
+ * @details You can see a complete documentation on  <https://github.com/pu2clr/QN800X>
+ * @details There are examples that can help you in your project on  <https://github.com/pu2clr/QN800X/tree/master/examples>
+ * @see [General Documentation](https://pu2clr.github.io/QN800X/)
  *
  * @author PU2CLR - Ricardo Lima Caratti
  * @date  2024
  */
 
-#ifndef _qn800X_H // Prevent this file from being compiled more than once
-#define _qn800X_H
+#ifndef _qn800x_H // Prevent this file from being compiled more than once
+#define _qn800x_H
 
 #include <Arduino.h>
 #include <Wire.h>
 
-#define qn800X_I2C_ADDRESS 0x21   // See Datasheet pag. 16.
-#define qn800X_RESET_DELAY 1000   // Delay after reset in us
-#define qn800X_DELAY_COMMAND 2500 // Delay after command
+#define qn800x_I2C_ADDRESS 0x21   // See Datasheet pag. 16.
+#define qn800x_RESET_DELAY 1000   // Delay after reset in us
+#define qn800x_DELAY_COMMAND 2500 // Delay after command
 
 /**
- * @brief QN8066 Register addresses
+ * @brief QN800X Register addresses
  *
  */
 
@@ -67,7 +67,7 @@
 /** @defgroup group00 Union, Struct and Defined Data Types
  * @section group01 Data Types
  *
- * @brief QN8066 data representation
+ * @brief QN800X data representation
  *
  * @details
  *
@@ -127,7 +127,7 @@ typedef union {
     uint8_t RXCCAD:1;   //!< RX CCA threshold MSB. See CCA register 19h.
   } arg;
   uint8_t raw;
-} qn800X_dev_add;
+} qn800x_dev_add;
 
 /**
  * @ingroup group00
@@ -161,7 +161,7 @@ typedef union {
     uint8_t MUTE_EN:1;    //!< TX and RX audio mute enable: 0=Un-mute;1=Mute
   } arg;
   uint8_t raw;
-} qn800X_anactl1;
+} qn800x_anactl1;
 
 /**
  * @ingroup group00
@@ -182,7 +182,7 @@ typedef union {
     uint8_t RIN: 2;     //!< TX mode input impedance for both L/R channels: (kΩ)
   } arg;
   uint8_t raw;
-} qn800X_reg_vga;
+} qn800x_reg_vga;
 
 
 /**
@@ -196,7 +196,7 @@ typedef union {
     uint8_t   Rsvd:2;
   } arg;
   uint8_t raw;
-} qn800X_cidr1;
+} qn800x_cidr1;
 
 /**
  * @ingroup group00
@@ -208,7 +208,7 @@ typedef union {
     uint8_t   CID3:4;
   } arg;
   uint8_t raw;
-} qn800X_cidr2;
+} qn800x_cidr2;
 
 
 /**
@@ -248,7 +248,7 @@ typedef union {
     uint8_t I2SBW:2;        //!< See I2S bit width table
   } arg;
   uint8_t raw;
-} qn800X_i2s;
+} qn800x_i2s;
 
 
 /**
@@ -263,7 +263,7 @@ typedef union {
 typedef union {
   uint8_t CH;
   uint8_t raw;
-} qn800X_ch;
+} qn800x_ch;
 
 
 /**
@@ -273,7 +273,7 @@ typedef union {
 typedef union {
   uint8_t CH_STA;
   uint8_t raw;
-} qn800X_ch_start;
+} qn800x_ch_start;
 
 /**
  * @ingroup group00
@@ -282,7 +282,7 @@ typedef union {
 typedef union {
   uint8_t CH_STP;
   uint8_t raw;
-} qn800X_ch_stop;
+} qn800x_ch_stop;
 
 /**
  * @ingroup group00
@@ -303,7 +303,7 @@ typedef union {
     uint8_t FSTEP:2;    //!< See CCA (channel scan) frequency step table 
   } arg;
   uint8_t raw;
-} qn800X_ch_step;
+} qn800x_ch_step;
 
 
 /**
@@ -314,20 +314,103 @@ typedef union {
 typedef union {
   uint8_t PAC_TARGET;   //!< Valid values are 31-131 dBuV
   uint8_t raw;
-} qn800X_pac_target;
+} qn800x_pac_target;
 
 
-// ---> To be continue...
 /**
  * @ingroup group00
  * @brief Sets TX gain parameters.
+ * | TXAGC_GVGA | Attenuation/Gain depending on RIN - 0, 1, 2 AND 3 RESPECTIVELY  |
+ * | ---------- | ---------------------------------------------------------- |
+ * |  0 - 0000  |  4.5; -1.5; -7.5; -13.5 |
+ * |  1 - 0001  |  6.0;  0.0; -6.0; -12.0 |
+ * |  2 - 0010  |  7.5;  1.5; -4.5; -10.5 |
+ * |  3 - 0011  |  9.0;  3.0; -3.0; -9.0  |
+ * |  4 - 0100  | 10.5;  4.5; -1.5; -7.5  |
+ * |  5 - 0101  | 12.0;  6.0;  0.0; -6.0  |  
+ * |  6 - 0110  | 13.5;  7.5;  1.5; -4.5  |
+ * |  7 - 0111  | 15.0;  9.0;  3.0; -3.0  |
+ * |  8 - 1000  | 16.5; 10.5;  4.5; -1.5  | 
+ * |  9 - 1001  | 18.0; 12.0;  6.0;  0.0  |
+ * | 10 - 1010  | 19.5; 13.5;  7.5;  1.5  |
+ * | 11 - 1011  | 21.0; 15.0;  9.0;  3.0  |
+ * |  Others    | Reserved |
  */
 typedef union {
   struct {
-    uint8_t TXAGC_GVGA:4;  //!< TX input buffer gain: (dB)
+    uint8_t TXAGC_GVGA:4;     //!< TX input buffer gain: (dB). See table.
+    uint8_t TXAGC_GDB:1;      //!< TX digital gain: 0=0 dB; 1=1dB
+    uint8_t IMR:1;            //!< Image Rejection: 0=LO<RF, image is in lower side;1=LO>RF, image is in upper side.
+    uint8_t TAGC_GAIN_SEL:1;  //!< TX AGC Gain selection method:
+    uint8_t TX_SFTCLPEN:1;    //!< TX soft clipping enable:0=Disabled;1=Enabled 
   } arg;
   uint8_t raw;
-} qn800X_xxxx;
+} qn800x_txagc_gain;
+
+
+
+/**
+ * @ingroup group00
+ * @brief Specify total TX frequency deviation.
+ */
+typedef union {
+  uint8_t TX_FDEV;    //!< Specify total TX frequency deviation: TX frequency deviation = 0.69 kHz*TX_FEDV.
+  uint8_t raw;
+} qn800x_tx_fdev;
+
+
+/**
+ * @ingroup group00
+ * @brief Gain of TX pilot frequency deviation, I2S buffer clear.
+ * @details TX CCA / RX CCA Interrupt Enable: When CCA_INT_EN=1, a 4.5ms low pulse will be output from DIN/INT (RX mode) or DOUT/INT (TX mode) when TXCCA (TX mode) or a RXCCA (RX mode) is finished.
+ * @details RDS RX/TX Interrupt Enable: When RDS_INT_EN=1, a 4.5ms low pulse will be output from DIN/INT (RX mode) or DOUT/INT (TX mode) when a new group of data in RDSD0~RDSD7 is loaded into the internal transmitting buffer after user toggles RDSTXRDY (TX mode) or a new group of data is received and stored into RDS0~RDS7 (RX mode).
+ * @details GAIN_TXPLT - Gain of TX pilot to adjust pilot frequency deviation: values from 7 to 10.
+ *
+ */
+typedef union {
+  struct {
+    uint8_t CCA_INT_EN:1;     //!< TX CCA / RX CCA Interrupt Enable: 0=Disable;1=Enable
+    uint8_t RDS_INT_EN:1;     //!< RDS RX/TX Interrupt Enable: 0=Disable;1=Enable 
+    uint8_t GAIN_TXPLT:4;     //!< Gain of TX pilot to adjust pilot frequency deviation: Refer to peak frequency deviation of MPX signal when audio input is full scale.
+    uint8_t I2SOVFL_CLR:1;    //!< I2S buffer overflow clear: User has to de-assert this bit after clearing: 0=No action;1=Clear
+    uint8_t I2SUNDFL_CLR:1;   //!< I2S buffer underflow clear: User has to de-assert this bit after clearing: 0=No Action;1=Clear
+  } arg;
+  uint8_t raw;
+} qn800x_gain_txplt;
+
+/**
+ * @ingroup group00
+ *
+ * @brief RDS - RDS data byte 0 to byte 7 
+ *
+ */
+
+typedef union {
+  struct {
+    uint8_t RDSD0; //!< RDS data byte 0  - 0x10
+    uint8_t RDSD1; //!< RDS data byte 1  - 0x11
+    uint8_t RDSD2; //!< RDS data byte 2  - 0x12
+    uint8_t RDSD3; //!< RDS data byte 3  - 0x13
+    uint8_t RDSD4; //!< RDS data byte 4  - 0x14
+    uint8_t RDSD5; //!< RDS data byte 5  - 0x15
+    uint8_t RDSD6; //!< RDS data byte 6  - 0x16
+    uint8_t RDSD7; //!< RDS data byte 7  - 0x17
+  } arg;
+  uint8_t data[8];
+} qn800x_rds;
+
+
+/**
+ * @ingroup group00
+ * @brief RDSFDEV - Specify RDS frequency deviation, RDS mode selection.
+ */
+typedef union {
+  struct {
+    uint8_t RDSFDEV:7;     //!< Specify RDS frequency deviation: RDS frequency deviation = 0.35 kHz*RDSFDEV.
+    uint8_t RDS_ONLY:1;    //!< RDS mode selection: 0=RDS and MMBS blocks;1=RDS block only.
+  } arg;
+  uint8_t raw;
+} qn800x_rdsfdev;
 
 
 /**
@@ -339,7 +422,7 @@ typedef union {
     uint8_t   dummy;
   } arg;
   uint8_t raw;
-} qn800X_xxxx;
+} qn800x_xxxx;
 
 /**
  * @ingroup group00
@@ -350,7 +433,7 @@ typedef union {
     uint8_t   dummy;
   } arg;
   uint8_t raw;
-} qn800X_yyyy;
+} qn800x_yyyy;
 
 
 
@@ -499,13 +582,13 @@ typedef union {
 
 /**
  * @ingroup  CLASSDEF
- * @brief QN8066 Class
+ * @brief QN800X Class
  * @details This class implements all functions that will help you to control
- * the QN8066 devices.
+ * the QN800X devices.
  *
  * @author PU2CLR - Ricardo Lima Caratti
  */
-class QN8066 {
+class QN800X {
 private:
 
 protected:
@@ -524,4 +607,4 @@ char* formatCurrentFrequency(char decimalSeparator);
 
 
 };
-#endif // _qn800X_H
+#endif // _qn800x_H
