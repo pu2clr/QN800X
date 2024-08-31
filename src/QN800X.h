@@ -168,12 +168,12 @@ typedef union {
  * @brief TX mode input impedance, crystal cap load setting.
  * @details TX mode input impedance for both L/R channels is expressed in kΩ. The table below shows the velues available.
  *
- * | RIN Value  | Impedance kΩ    | 
- * | ---------  | --------------  | 
- * | 00 (0)     | 10              |
- * | 01 (1)     | 20              |
- * | 10 (2)     | 40              |
- * | 11 (3)     | 80              |
+ * | RIN Value | Impedance  | 
+ * | --------- | ---------- | 
+ * | 00 (0)    | 10kΩ       |
+ * | 01 (1)    | 20kΩ       |
+ * | 10 (2)    | 40kΩ       |
+ * | 11 (3)    | 80kΩ       |
  *   
  */
 typedef union {
@@ -185,6 +185,10 @@ typedef union {
 } qn8066_reg_vga;
 
 
+/**
+ * @ingroup group00
+ * @brief Device ID
+ */
 typedef union {
   struct {
     uint8_t   CID2:2;
@@ -194,7 +198,10 @@ typedef union {
   uint8_t raw;
 } qn8066_cidr1;
 
-
+/**
+ * @ingroup group00
+ * @brief Device ID
+ */
 typedef union {
   struct {
     uint8_t   CID4:2;
