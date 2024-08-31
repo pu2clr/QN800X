@@ -12,8 +12,8 @@
  * @date  2024
  */
 
-#ifndef _qn800x_H // Prevent this file from being compiled more than once
-#define _qn800x_H
+#ifndef _QN800X_H // Prevent this file from being compiled more than once
+#define _QN800X_H
 
 #include <Arduino.h>
 #include <Wire.h>
@@ -607,4 +607,4 @@ char* formatCurrentFrequency(char decimalSeparator);
 
 
 };
-#endif // _qn800x_H
+#endif // _QN800X_H
