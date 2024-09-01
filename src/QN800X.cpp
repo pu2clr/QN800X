@@ -168,6 +168,6 @@ void QN800X::convertToChar(uint16_t value, char *strValue, uint8_t len, uint8_t 
 */
 char* QN800X::formatCurrentFrequency(char decimalSeparator)
 {
-   this->convertToChar(this->rxCurrentFrequency, this->strRxCurrentFrequency, 4, 3, decimalSeparator, true);
-   return this->strRxCurrentFrequency;
+   this->convertToChar(this->currentFrequency, this->strCurrentFrequency, 4, 3, decimalSeparator, true);
+   return this->strCurrentFrequency;
 }

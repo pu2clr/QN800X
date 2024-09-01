@@ -422,7 +422,7 @@ typedef union {
 typedef union {
   struct {
     uint8_t RXCCAD:5;     //!< Lower 5 bits of RXCCAD [5:0]. See reg. 02h [7] for RXCCAD [5]
-    uint8_d TXCCAA:3;     //!< Scaling factor to determine in-band noise power to out-of-band noise power ratio.
+    uint8_t TXCCAA:3;     //!< Scaling factor to determine in-band noise power to out-of-band noise power ratio.
   } arg;
   uint8_t raw;
 } qn800x_cca;
@@ -720,9 +720,19 @@ typedef union {
 class QN800X {
 private:
 
+
+char strCurrentFrequency[8];  // Stores formated current frequency
+uint16_t currentFrequency; 
+uint8_t  currentStep = 1;     //!<  current frequency step. Default is 100kHz
+
 protected:
 
 public:
+
+
+void begin() {
+
+}
 
 
 bool detectDevice();
@@ -731,8 +741,8 @@ uint8_t getRegister(uint8_t registerNumber);
 void setRegister(uint8_t registerNumber, uint8_t value);
 
 
-void convertToChar(uint16_t value, char *strValue, uint8_t len, uint8_t dot, uint8_t separator, bool remove_leading_zeros);
-char* formatCurrentFrequency(char decimalSeparator);
+void convertToChar(uint16_t value, char *strValue, uint8_t len, uint8_t dot, uint8_t separator = '.', bool remove_leading_zeros = true);
+char* formatCurrentFrequency(char decimalSeparator = ',');
 
 
 };
