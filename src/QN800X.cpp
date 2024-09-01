@@ -64,7 +64,7 @@ uint8_t QN800X::scanI2CBus(uint8_t *device) {
 /**
  * @ingroup group02 I2C
  * @brief Gets register information
- * @details 8066 commands. It provides a means to run commands that are not currently supported by the standard API.
+ * @details QN800X commands. It provides a means to run commands that are not currently supported by the standard API.
  * @param registerNumber
  * @return uint8_t Value of the register
  */
@@ -82,7 +82,7 @@ uint8_t QN800X::getRegister(uint8_t registerNumber) {
 /**
  * @ingroup group02 I2C
  * @brief Stores a velue to a given register
- * @details 8066 commands. It provides a means to run commands that are not currently supported by the standard API.
+ * @details QN800X commands. It provides a means to run commands that are not currently supported by the standard API.
  * @param registerNumber
  * @param value
  */
@@ -95,6 +95,32 @@ void QN800X::setRegister(uint8_t registerNumber, uint8_t value) {
   delayMicroseconds(qn800x_DELAY_COMMAND);
 }
 
+
+/**
+ * @ingroup group02 I2C
+ * @brief Gets de device ID
+ * @details Gets the Chip ID for product family (CID1) and Chip ID for minor revision (CID2)
+ * @details See CIDR1 register (Address 0x05 - Datasheet page 36)   
+ * @param value
+ */
+qn800x_cidr1 QN800X::getDeviceProductID() {
+    qn800x_cidr1 value;
+    value.raw = this->getRegister(QN_CIDR1);
+    return value;
+};
+
+
+/**
+ * @ingroup group02 I2C
+ * @brief Gets de device ID
+ * @details Gets the Chip ID for product family (CID3) and Chip ID for minor revision (CID4)
+ * @param value
+ */
+qn800x_cidr2 QN800X::getDeviceProductFamily() {
+    qn800x_cidr2 value;
+    value.raw = this->getRegister(QN_CIDR2);
+    return value;
+}
 
 
 /** @defgroup group99 Helper and Tools functions*/

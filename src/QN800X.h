@@ -18,9 +18,9 @@
 #include <Arduino.h>
 #include <Wire.h>
 
-#define qn800x_I2C_ADDRESS 0x21   // See Datasheet pag. 16.
-#define qn800x_RESET_DELAY 1000   // Delay after reset in us
-#define qn800x_DELAY_COMMAND 2500 // Delay after command
+#define qn800X_I2C_ADDRESS 0x2B   // See Datasheet pag. 25 (5.1 2-Wire Serial Control Interface).
+#define qn800X_RESET_DELAY 1000   // Delay after reset in us
+#define qn800X_DELAY_COMMAND 2500 // Delay after command
 
 /**
  * @brief QN800X Register addresses
@@ -730,15 +730,20 @@ protected:
 public:
 
 
+// QN800X basic functions 
 void begin() {
 
 }
-
 
 bool detectDevice();
 uint8_t scanI2CBus(uint8_t *device);
 uint8_t getRegister(uint8_t registerNumber); 
 void setRegister(uint8_t registerNumber, uint8_t value);
+
+qn800x_cidr1 getDeviceProductID();
+qn800x_cidr2 getDeviceProductFamily();
+
+
 
 
 void convertToChar(uint16_t value, char *strValue, uint8_t len, uint8_t dot, uint8_t separator = '.', bool remove_leading_zeros = true);
