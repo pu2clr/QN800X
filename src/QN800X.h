@@ -415,6 +415,156 @@ typedef union {
 
 /**
  * @ingroup group00
+ * @brief Sets CCA parameters.
+ * @details RXCCAD - Lower 5 bits of RXCCAD [5:0]. See reg. 02h [7] for RXCCAD [5]. RXCCAD [5:0] is used to set the threshold for RX CCA. When RSSI is selected as RXCCA criteria (default), channel with RSSI (dBuV) > (RXCCAD-10) dBuV is selected as valid channel. When SNR is selected as criteria for CCA, channel with CNR at RF input > RXCCAD will be selected as valid channel.
+ * @details TXCCAA - Scaling factor to determine in-band noise power to out-of-band noise power ratio. Value 0 ~ 7 directly written in, default is 2. When TXCCAA is not zero, valid channels must satisfy the condition "in-ban power > TXCCAA * out-of- band power", which usually is set to select channels without adjacent channel interference. When TXCCAA=0, this condition is omitted.
+ */
+typedef union {
+  struct {
+    uint8_t RXCCAD:5;     //!< Lower 5 bits of RXCCAD [5:0]. See reg. 02h [7] for RXCCAD [5]
+    uint8_d TXCCAA:3;     //!< Scaling factor to determine in-band noise power to out-of-band noise power ratio.
+  } arg;
+  uint8_t raw;
+} qn800x_cca;
+
+
+/**
+ * @ingroup group00
+ * @brief Device status indicators (1).
+ */
+typedef union {
+  struct {
+    uint8_t ST_MO_RX:1;   //!< Stereo receiving status:0=Stereo;1=Mono
+    uint8_t RXAGCERR:1;   //!< RXAGC status: 0=No Error; 1=AGC error
+    uint8_t RXAGCSET:1;   //!< RX AGC settling status: 0=Not settled; 1=Settled
+    uint8_t INSAT:1;      //!< Input level saturation flag:0=No saturation;1=Input level too high, Channel saturates.
+    uint8_t I2SUNDFL:1;   //!< I2S underflow indicator:0=No underflow;1=Underflow
+    uint8_t I2SOVFL:1;    //!< I2S overflow indicator:0=No overflow;1=Overflow
+    uint8_t RXCCA_FAIL:1; //!<RXCCA Status Flag: 0=RX CCA successful finds a valid channel;1=RX CCA fails to find a valid channel. 
+    uint8_t rsvd:1;       //!< Reserved
+  } arg;
+  uint8_t raw;
+} qn800x_status1;
+
+/**
+ * @ingroup group00
+ * @brief Device status indicators (3).
+ */
+typedef union {
+  struct {
+    uint8_t RDS3ERR:1;      //!< Received RDS block 3 status indicator:
+    uint8_t RDS2ERR:1;      //!< Received RDS block 2 status indicator:
+    uint8_t RDS1ERR:1;      //!< Received RDS block 1 status indicator:
+    uint8_t RDS0ERR:1;      //!< Received RDS block 0 status indicator:
+    uint8_t RDSSYNC:1;      //!< RDS block synchronous indicator:0=Non-synchronous;1=Synchronous
+    uint8_t RDSC0C1:1;      //!< Type indicator of the RDS third block in one group:0=C0;1=C1
+    uint8_t E_DET:1;        //!< ‘E’ block (MMBS block) detected:0=Not detected;1=Detected
+    uint8_t RDS_RXTXUPD:1;  //!< RDS RX: RDS received group updated. 
+  } arg;
+  uint8_t raw;
+} qn800x_status3;
+
+
+/**
+ * @ingroup group00
+ * @brief In-band signal RSSI dBμV value.
+ */
+typedef union {
+  uint8_t RSSIDB;     //!< In-band signal RSSI (Received Signal Strength Indicator) dBμV value: dBμV = RSSI (with AGC correction) - 40
+  uint8_t raw;
+} qn800x_rssisig;
+
+
+/**
+ * @ingroup group00
+ * @brief Multipath signal RSSI (Received signal strength indicator) dB value.
+ */
+typedef union {
+  uint8_t RSSIMPDB;     //!< Multipath signal RSSI (Received signal strength indicator) DB value.
+  uint8_t raw;
+} qn800x_rssimp;
+
+/**
+ * @ingroup group00
+ * @brief Estimated RF input CNR value from noise floor around the pilot after FM demodulation.
+ */
+typedef union {
+  uint8_t SNRDB;     //!< Estimated RF input CNR (Carrier Noise Ratio) value from noise floor around the pilot after FM demodulation.
+  uint8_t raw;
+} qn800x_snr;
+
+
+/**
+ * @ingroup group00
+ * @brief XCLK pin control.
+ */
+typedef union {
+  struct {
+    uint8_t rsvd1:4;
+    uint8_t XTLBYP:1;     //!< Direct inject crystal oscillation from external XCLK pin; 0=Use internal crystal oscillator; 1=Inject external clock from pin XCLK.
+    uint8_t rsvd2:3;
+  } arg;
+  uint8_t raw;
+} qn800x_reg_xlt3;
+
+
+/**
+ * @ingroup group00
+ * @brief DAC output stage gain.
+ */
+typedef union {
+  struct {
+    uint8_t DACG:2;   //!< DAC output stage gain:0=3dB;1=0dB;2=-3dB;3=-6dB
+    uint8_t rsvd:6;     
+  } arg;
+  uint8_t raw;
+} qn800x_reg_dac;
+
+
+/**
+ * @ingroup group00
+ * @brief PA tuning cap calibration.
+ */
+typedef union {
+  struct { 
+    uint8_t PACAP:6;   //!< User-set PA Tuning cap. Each LSB is 0.3pF. The read back value is the calibration result.
+    uint8_t PAC_DIS:1; //!< Disable PA tuning cap calibration and use PACAP as circuit setting:0=Use calibrated value;1=No calibration and use user-set value  
+    uint8_t PAC_REQ:1; //!< Manually request PA tuning cap and gain calibration:0=At the 1->0 transition, calibration starts;1=Reset the calibration
+  } arg;
+  uint8_t raw;
+} qn800x_pac_cal;
+
+
+/**
+ * @ingroup group00
+ * @brief PA gain calibration.
+ * | PAGAIN / POUT  |  Power w matching |
+ * | -------------- | ----------------- | 
+ * |      0         |       124         |
+ * |      1         |       122.5       |
+ * |      2         |       121         |
+ * |      3         |       119.5       |
+ * |      4         |       118         |
+ * |      5         |       116.5       |
+ * |      6         |       115         |
+ * |      7         |       113.5       |
+ * |      8         |       112         |
+ * |      9         |       110.5       |           
+ */
+typedef union {
+  struct { 
+    uint8_t PAGAIN:4;  //!< Set PAGAIn setting. The read back value is the calibration result. Transmitter output voltage on the RFO pin (dBuV) is 124dBuV-1.5dB*PAGAIN [3:0].
+    uint8_t IPOW:2;    //!< Set PA current. The read back value is the calibration result. 
+    uint8_t PAG_DIS:1; //!< Disable PA output power calibration and use IPOW, PAGAIN as circuit setting
+    uint8_t rsvd:1;    //!< Reserved 
+  } arg;
+  uint8_t raw;
+} qn800x_pag_cal;
+
+
+
+/**
+ * @ingroup group00
  * @brief Device ID
  */
 typedef union {
