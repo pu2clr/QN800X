@@ -549,7 +549,13 @@ typedef union {
  * |      6         |       115         |
  * |      7         |       113.5       |
  * |      8         |       112         |
- * |      9         |       110.5       |           
+ * |      9         |       110.5       |  
+ * |     10         |       109         |
+ * |     11         |       107.5       |
+ * |     12         |       106         |
+ * |     13         |       104.5       |
+ * |     14         |       103         |
+ * |     15         |       101.5       |                  
  */
 typedef union {
   struct { 
@@ -560,32 +566,6 @@ typedef union {
   } arg;
   uint8_t raw;
 } qn800x_pag_cal;
-
-
-
-/**
- * @ingroup group00
- * @brief Device ID
- */
-typedef union {
-  struct {
-    uint8_t   dummy;
-  } arg;
-  uint8_t raw;
-} qn800x_xxxx;
-
-/**
- * @ingroup group00
- * @brief Device ID
- */
-typedef union {
-  struct {
-    uint8_t   dummy;
-  } arg;
-  uint8_t raw;
-} qn800x_yyyy;
-
-
 
 
 /**
@@ -603,7 +583,6 @@ typedef union {
   unsigned char byteContent[2];
   uint16_t pi;   // pi Code
 } RDS_BLOCK1;
-
 
 
 /**
