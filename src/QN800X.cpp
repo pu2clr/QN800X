@@ -48,6 +48,7 @@ uint8_t QN800X::scanI2CBus(uint8_t *device) {
   for (address = 1; address < 127; address++) {
     Wire.beginTransmission(address);
     error = Wire.endTransmission();
+    delayMicroseconds(200);
 
     if (error == 0) {
       device[idxDevice] = address;
