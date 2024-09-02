@@ -27,7 +27,7 @@ bool QN800X::detectDevice() {
 
   Wire.begin();
   // check 0x21 I2C address
-  Wire.beginTransmission(qn800x_I2C_ADDRESS);
+  Wire.beginTransmission(QN800X_I2C_ADDRESS);
   return !Wire.endTransmission();
 }
 
@@ -40,7 +40,7 @@ bool QN800X::detectDevice() {
  */
 uint8_t QN800X::scanI2CBus(uint8_t *device) {
 
-  uint8_t error, address;
+  int  error, address;
   uint8_t idxDevice = 0;
 
   Wire.begin();
@@ -70,12 +70,12 @@ uint8_t QN800X::scanI2CBus(uint8_t *device) {
  */
 uint8_t QN800X::getRegister(uint8_t registerNumber) {
 
-  Wire.beginTransmission(qn800x_I2C_ADDRESS);
+  Wire.beginTransmission(QN800X_I2C_ADDRESS);
   Wire.write(registerNumber);
   Wire.endTransmission();
-  delayMicroseconds(qn800x_DELAY_COMMAND);
+  delayMicroseconds(QN800X_DELAY_COMMAND);
 
-  Wire.requestFrom(qn800x_I2C_ADDRESS, 1);
+  Wire.requestFrom(QN800X_I2C_ADDRESS, 1);
   return Wire.read();
 }
 
@@ -88,11 +88,11 @@ uint8_t QN800X::getRegister(uint8_t registerNumber) {
  */
 void QN800X::setRegister(uint8_t registerNumber, uint8_t value) {
 
-  Wire.beginTransmission(qn800x_I2C_ADDRESS);
+  Wire.beginTransmission(QN800X_I2C_ADDRESS);
   Wire.write(registerNumber);
   Wire.write(value);
   Wire.endTransmission();
-  delayMicroseconds(qn800x_DELAY_COMMAND);
+  delayMicroseconds(QN800X_DELAY_COMMAND);
 }
 
 

@@ -18,9 +18,9 @@
 #include <Arduino.h>
 #include <Wire.h>
 
-#define qn800X_I2C_ADDRESS 0x2B   // See Datasheet pag. 25 (5.1 2-Wire Serial Control Interface).
-#define qn800X_RESET_DELAY 1000   // Delay after reset in us
-#define qn800X_DELAY_COMMAND 2500 // Delay after command
+#define QN800X_I2C_ADDRESS 0x2B   // See Datasheet pag. 25 (5.1 2-Wire Serial Control Interface).
+#define QN800X_RESET_DELAY 1000   // Delay after reset in us
+#define QN800X_DELAY_COMMAND 2500 // Delay after command
 
 /**
  * @brief QN800X Register addresses
